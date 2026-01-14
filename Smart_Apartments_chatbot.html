@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Apartments Complaint Management System</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.header {
+    background-color: #5c4033;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 700px;
+    height: 90vh;
+    margin: auto;
+    background-color: #d2b48c; /* beige */
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.chat-box {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* USER MESSAGE – LEFT */
+.user-msg {
+    background-color: #ffffff;
+    align-self: flex-start;
+    max-width: 75%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 10px;
+}
+
+/* BOT MESSAGE – RIGHT */
+.bot-msg {
+    background-color: #e6e6e6;
+    align-self: flex-end;
+    max-width: 75%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 10px;
+}
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.input-area button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background-color: #5c4033;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    padding: 5px;
+    color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    Smart Apartments Complaint Management System
+</div>
+
+<div class="chat-container">
+    <div class="chat-box" id="chatBox">
+        <div class="bot-msg">👋 Hello! Welcome to Smart Apartments complaint portal.</div>
+        <div class="bot-msg">Please describe your complaint.</div>
+    </div>
+
+    <div class="input-area">
+        <input 
+            type="text" 
+            id="userInput" 
+            placeholder="Type here..." 
+            onkeydown="checkEnter(event)"
+        />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<div class="footer">
+    This system is developed for academic purposes only.
+</div>
+
+<script>
+let step = 0;
+let complaintData = {
+    complaint: "",
+    flat: "",
+    block: "",
+    phone: ""
+};
+
+function checkEnter(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+}
+
+function sendMessage() {
+    const input = document.getElementById("userInput");
+    const message = input.value.trim();
+    if (message === "") return;
+
+    addUserMessage(message);
+    input.value = "";
+
+    setTimeout(() => {
+        handleBotResponse(message);
+    }, 400);
+}
+
+function addUserMessage(text) {
+    const chatBox = document.getElementById("chatBox");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "user-msg";
+    msgDiv.innerText = text;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function addBotMessage(text) {
+    const chatBox = document.getElementById("chatBox");
+    const msgDiv = document.createElement("div");
+    msgDiv.className = "bot-msg";
+    msgDiv.innerText = text;
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function handleBotResponse(message) {
+    if (step === 0) {
+        complaintData.complaint = message;
+        addBotMessage("Please enter your flat number.");
+        step++;
+    }
+    else if (step === 1) {
+        complaintData.flat = message;
+        addBotMessage("Please enter your block name.");
+        step++;
+    }
+    else if (step === 2) {
+        complaintData.block = message;
+        addBotMessage("Please enter your phone number.");
+        step++;
+    }
+    else if (step === 3) {
+        complaintData.phone = message;
+        addBotMessage("✅ Thank you. Your complaint has been registered.");
+        step++;
+
+        console.log("Complaint Data:", complaintData);
+    }
+}
+</script>
+
+</body>
+</html>
