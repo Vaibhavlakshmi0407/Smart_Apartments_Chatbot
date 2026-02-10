@@ -182,12 +182,43 @@ function handleBotResponse(message) {
         step++;
     }
     else if (step === 3) {
-        complaintData.phone = message;
-        addBotMessage("✅ Thank you. Your complaint has been registered.");
-        step++;
 
-        console.log("Complaint Data:", complaintData);
-    }
+    complaintData.phone = message;
+
+    addBotMessage("Submitting complaint...");
+
+    fetch("https://alphonso-nonexultant-unclearly.ngrok-free.dev/submit_complaint", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            complaintText: complaintData.complaint,
+            flatNumber: complaintData.flat,
+            blockName: complaintData.block,
+            phoneNumber: complaintData.phone
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        addBotMessage(
+            "✅ Complaint Registered!\n" +
+            "Department: " + data.department +
+            "\nPriority: " + data.priority
+        );
+
+    })
+    .catch(error => {
+
+        addBotMessage("❌ Server connection failed.");
+        console.log(error);
+
+    });
+
+    step++;
+}
+    
 }
 </script>
 
@@ -197,37 +228,4 @@ function handleBotResponse(message) {
 
 
 
-
-<script>
-
-async function sendComplaint() {
-
-    // Get values from UI input fields
-    const complaint = document.getElementById("complaintText").value;
-    const flat = document.getElementById("flatNumber").value;
-    const block = document.getElementById("blockName").value;
-    const phone = document.getElementById("phoneNumber").value;
-
-    const response = await fetch("https://alphonso-nonexultant-unclearly.ngrok-free.dev/submit_complaint", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            complaintText: complaint,
-            flatNumber: flat,
-            blockName: block,
-            phoneNumber: phone
-        })
-    });
-
-    const result = await response.json();
-
-    console.log(result);
-    alert("Department: " + result.department + "\nPriority: " + result.priority);
-}
-
-</script>
-
-<button onclick="sendComplaint()">Send</button>
 
