@@ -120,6 +120,24 @@ body {
 </div>
 
 <script>
+function sendEmail(complaintData, department, priority) {
+
+    emailjs.send("service_iily1c9", "template_na6mgtv", {
+        complaint: complaintData.complaint,
+        department: department,
+        priority: priority,
+        flat: complaintData.flat,
+        block: complaintData.block,
+        phone: complaintData.phone
+    })
+    .then(function(response) {
+        console.log("✅ Email sent successfully");
+    }, function(error) {
+        console.log("❌ Email failed", error);
+    });
+
+}
+
 let step = 0;
 let complaintData = {
     complaint: "",
@@ -202,29 +220,34 @@ function handleBotResponse(message) {
     .then(response => response.json())
     .then(data => {
 
-        addBotMessage(
-            "✅ Complaint Registered!\n" +
-            "Department: " + data.department +
-            "\nPriority: " + data.priority
-        );
+    addBotMessage(
+        "✅ Complaint Registered!\n" +
+        "Department: " + data.department +
+        "\nPriority: " + data.priority
+    );
 
-    })
-    .catch(error => {
+    // 🔥 EMAIL TRIGGER
+    if (data.priority.toLowerCase().includes("high")) {
+        sendEmail(complaintData, data.department, data.priority);
+    }
 
-        addBotMessage("❌ Server connection failed.");
-        console.log(error);
-
-    });
-
+})
     step++;
 }
     
 }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+    emailjs.init("i6SpODc69Mk4vJ6M-");  // 🔴 replace this
+})();
+</script>
+
 </body>
 </html>
-
 
 
 
